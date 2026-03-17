@@ -1,0 +1,167 @@
+{
+  "video_id": "sample_001",
+  "title": "Les meilleurs restaurants de Paris",
+  "channel": "FoodVlog",
+  "upload_date": "2024-06-15",
+  "comments": [
+    {
+      "id": "c001",
+      "text": "La pizza du restaurant italien etait incroyable, meilleure que celles de Naples",
+      "author": "GourmetPaul",
+      "timestamp": "2024-06-16T10:30:00",
+      "likes": 23,
+      "replies": [
+        {
+          "id": "r001",
+          "text": "Tellement d'accord, j'y suis allé la semaine derniere c'etait ouf",
+          "author": "MarieFood",
+          "timestamp": "2024-06-16T11:00:00",
+          "likes": 5
+        }
+      ]
+    },
+    {
+      "id": "c002",
+      "text": "Le sushi bar dans le 11eme est top aussi, poisson ultra frais",
+      "author": "TokyoFan",
+      "timestamp": "2024-06-16T14:20:00",
+      "likes": 15,
+      "replies": []
+    },
+    {
+      "id": "c003",
+      "text": "Mdr t'as oublié le kebab de la rue de la roquette, le meilleur de tout paris",
+      "author": "KebabKing",
+      "timestamp": "2024-06-17T09:00:00",
+      "likes": 42,
+      "replies": [
+        {
+          "id": "r002",
+          "text": "Le kebab c'est pas un restaurant frere 😂",
+          "author": "ChefSnob",
+          "timestamp": "2024-06-17T09:30:00",
+          "likes": 8
+        },
+        {
+          "id": "r003",
+          "text": "si c'est bon c'est bon, resto ou pas",
+          "author": "KebabKing",
+          "timestamp": "2024-06-17T10:00:00",
+          "likes": 12
+        }
+      ]
+    },
+    {
+      "id": "c004",
+      "text": "Super video comme d'hab! Continue les vlogs food c'est trop cool",
+      "author": "Subscriber42",
+      "timestamp": "2024-06-17T12:00:00",
+      "likes": 7,
+      "replies": []
+    },
+    {
+      "id": "c005",
+      "text": "Le burger du boucher dans le marais est le meilleur burger de la capitale",
+      "author": "BurgerAddict",
+      "timestamp": "2024-06-18T08:15:00",
+      "likes": 19,
+      "replies": []
+    },
+    {
+      "id": "c006",
+      "text": "Qui regarde en 2024 ?? like si t'es la avant 100k vues",
+      "author": "FirstComment",
+      "timestamp": "2024-06-18T10:00:00",
+      "likes": 3,
+      "replies": []
+    },
+    {
+      "id": "c007",
+      "text": "Franchement les prix sont abusés a Paris, pour le meme budget tu manges 3 fois mieux en province",
+      "author": "ProvinceBoy",
+      "timestamp": "2024-06-19T16:45:00",
+      "likes": 31,
+      "replies": [
+        {
+          "id": "r004",
+          "text": "c'est vrai mais c'est Paris quoi, tu payes l'ambiance aussi",
+          "author": "Parisien75",
+          "timestamp": "2024-06-19T17:00:00",
+          "likes": 4
+        }
+      ]
+    },
+    {
+      "id": "c008",
+      "text": "La creperie bretonne pres de Montparnasse elle est dans la video? c'est la meilleure",
+      "author": "BreizhForever",
+      "timestamp": "2024-06-20T11:30:00",
+      "likes": 9,
+      "replies": []
+    },
+    {
+      "id": "c009",
+      "text": "J'ai testé le coréen dont tu parles, le bibimbap est dingue et les portions sont enormes",
+      "author": "KoreanFoodLover",
+      "timestamp": "2024-06-21T13:00:00",
+      "likes": 14,
+      "replies": []
+    },
+    {
+      "id": "c010",
+      "text": "PREMIER !!!! 🎉🎉🎉",
+      "author": "SpeedComment",
+      "timestamp": "2024-06-15T18:01:00",
+      "likes": 0,
+      "replies": []
+    },
+    {
+      "id": "c011",
+      "text": "Le pho vietnamien du 13eme arrondissement c'est le meilleur rapport qualite prix de paris",
+      "author": "AsiaFood",
+      "timestamp": "2024-06-22T09:00:00",
+      "likes": 17,
+      "replies": []
+    },
+    {
+      "id": "c012",
+      "text": "Trop de restaurants touristiques dans ta selection, les vrais bons plans c'est dans les petites rues",
+      "author": "LocalExpert",
+      "timestamp": "2024-06-22T14:30:00",
+      "likes": 25,
+      "replies": [
+        {
+          "id": "r005",
+          "text": "Grave, les restos sur les grandes avenues c'est des arnaques",
+          "author": "FoodCritic",
+          "timestamp": "2024-06-22T15:00:00",
+          "likes": 6
+        }
+      ]
+    },
+    {
+      "id": "c013",
+      "text": "Check my channel for more food content https://youtube.com/spam subscribe plzzzz 🙏🙏",
+      "author": "SpamBot",
+      "timestamp": "2024-06-23T03:00:00",
+      "likes": 0,
+      "replies": []
+    },
+    {
+      "id": "c014",
+      "text": "La patisserie Cedric Grolet vaut le detour meme si c'est cher, les tartes sont des oeuvres d'art",
+      "author": "SweetTooth",
+      "timestamp": "2024-06-23T16:00:00",
+      "likes": 11,
+      "replies": []
+    },
+    {
+      "id": "c015",
+      "text": "J'habite a Lyon et je confirme que la cuisine parisienne c'est surcoté, venez a Lyon pour la vraie gastronomie",
+      "author": "LyonGastro",
+      "timestamp": "2024-06-24T10:00:00",
+      "likes": 28,
+      "replies": []
+    }
+  ]
+}

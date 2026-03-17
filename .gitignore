@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environnement
+.env
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Données (trop lourdes pour git)
+data/*
+!data/sample/
+models/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+
+# spaCy models
+fr_core_news_md*
+en_core_web_md*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/

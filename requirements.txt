@@ -1,0 +1,27 @@
+# extraction
+yt-dlp
+
+# preprocessing
+spacy
+langdetect
+
+# modeling
+gensim
+scikit-learn
+bertopic
+sentence-transformers
+umap-learn
+hdbscan
+
+# visualization
+flask
+plotly
+wordcloud
+
+# data
+pandas
+numpy
+pyarrow
+
+# tests
+pytest

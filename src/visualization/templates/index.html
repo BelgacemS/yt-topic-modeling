@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block navbar_info %}
+    {{ model_name }} &mdash; {{ nb_docs }} documents, {{ nb_topics }} topics
+{% endblock %}
+
+{% block content %}
+
+<!-- Filtres -->
+<div class="filter-row">
+    <div class="row align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Chaîne</label>
+            <select id="filter-channel" class="form-select">
+                <option value="all">Toutes les chaînes</option>
+                {% for ch in channels %}
+                <option value="{{ ch }}">{{ ch }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Vidéo</label>
+            <select id="filter-video" class="form-select">
+                <option value="all">Toutes les vidéos</option>
+                {% for vid, title in videos.items() %}
+                <option value="{{ vid }}">{{ title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Topic affiché</label>
+            <select id="topic-select" class="form-select">
+                {% for tid, label in topic_labels.items() %}
+                {% if tid != -1 %}
+                <option value="{{ tid }}" {% if tid == first_topic %}selected{% endif %}>{{ label }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Scatter Plot UMAP -->
+<div class="card mb-4">
+    <div class="card-header">Projection UMAP des commentaires (colorés par topic)</div>
+    <div class="card-body">
+        <div id="scatter-plot" style="height: 520px;"></div>
+    </div>
+</div>
+
+<!-- Barchart + Wordcloud côte à côte -->
+<div class="row mb-4">
+    <div class="col-lg-6 mb-3 mb-lg-0">
+        <div class="card h-100">
+            <div class="card-header">Top 10 mots du topic sélectionné</div>
+            <div class="card-body">
+                <div id="barchart" style="height: 370px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Nuage de mots du topic sélectionné</div>
+            <div class="card-body text-center d-flex align-items-center justify-content-center">
+                <img id="wordcloud-img" src="" alt="Nuage de mots" class="img-fluid" style="max-height: 370px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline -->
+<div class="card mb-4">
+    <div class="card-header">Évolution temporelle des topics (% par date de publication)</div>
+    <div class="card-body">
+        <div id="timeline-plot" style="height: 400px;"></div>
+    </div>
+</div>
+
+<!-- Tableau récapitulatif -->
+<div class="card mb-4">
+    <div class="card-header">Résumé des topics</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="topic-table">
+                <thead>
+                    <tr>
+                        <th>Topic</th>
+                        <th>Nb documents</th>
+                        <th>Mots-clés principaux</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// palette de couleurs
+const COLORS = [
+    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+    '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+    '#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5',
+    '#c49c94', '#f7b6d2', '#c7c7c7', '#dbdb8d', '#9edae5',
+];
+
+let currentTopic = {{ first_topic }};
+
+// --- helpers ---
+
+async function fetchJSON(url) {
+    const resp = await fetch(url);
+    return resp.json();
+}
+
+// --- scatter plot ---
+
+async function loadScatter() {
+    const channel = document.getElementById('filter-channel').value;
+    const video = document.getElementById('filter-video').value;
+    const data = await fetchJSON(`/api/scatter?channel=${channel}&video=${video}`);
+
+    // on regroupe par topic pour avoir une trace par couleur
+    const groups = {};
+    for (let i = 0; i < data.x.length; i++) {
+        const t = data.topic[i];
+        if (!groups[t]) {
+            groups[t] = { x: [], y: [], text: [], label: data.topic_label[i] };
+        }
+        groups[t].x.push(data.x[i]);
+        groups[t].y.push(data.y[i]);
+        groups[t].text.push(data.text[i]);
+    }
+
+    const traces = Object.entries(groups)
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([tid, g], idx) => ({
+            x: g.x,
+            y: g.y,
+            text: g.text,
+            hovertemplate: '%{text}<extra>' + g.label + '</extra>',
+            mode: 'markers',
+            type: 'scattergl',
+            name: g.label,
+            marker: {
+                size: 5,
+                color: tid == -1 ? '#ccc' : COLORS[idx % COLORS.length],
+                opacity: tid == -1 ? 0.3 : 0.7,
+            },
+        }));
+
+    Plotly.newPlot('scatter-plot', traces, {
+        xaxis: { title: 'UMAP 1', showgrid: false, zeroline: false },
+        yaxis: { title: 'UMAP 2', showgrid: false, zeroline: false },
+        hovermode: 'closest',
+        margin: { t: 20, b: 60 },
+        legend: { orientation: 'h', y: -0.15 },
+    }, { responsive: true });
+}
+
+// --- barchart top mots ---
+
+async function loadBarchart(topicId) {
+    const data = await fetchJSON(`/api/barchart/${topicId}`);
+
+    // on inverse pour que le mot le plus important soit en haut
+    const words = [...data.words].reverse();
+    const weights = [...data.weights].reverse();
+
+    Plotly.newPlot('barchart', [{
+        x: weights,
+        y: words,
+        type: 'bar',
+        orientation: 'h',
+        marker: { color: '#1f77b4' },
+    }], {
+        margin: { l: 120, r: 20, t: 10, b: 40 },
+        xaxis: { title: 'Poids' },
+        yaxis: { automargin: true },
+    }, { responsive: true });
+}
+
+// --- wordcloud ---
+
+function loadWordcloud(topicId) {
+    const img = document.getElementById('wordcloud-img');
+    // on ajoute un timestamp pour forcer le rechargement
+    img.src = `/api/wordcloud/${topicId}?t=${Date.now()}`;
+}
+
+// --- timeline ---
+
+async function loadTimeline() {
+    const data = await fetchJSON('/api/timeline');
+
+    if (!data.dates || data.dates.length === 0) {
+        document.getElementById('timeline-plot').innerHTML =
+            '<p class="text-muted text-center mt-5">Pas de données temporelles disponibles</p>';
+        return;
+    }
+
+    const traces = data.series.map((s, idx) => ({
+        x: data.dates,
+        y: s.values,
+        name: s.name,
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: { color: COLORS[idx % COLORS.length], width: 2 },
+        marker: { size: 6 },
+    }));
+
+    Plotly.newPlot('timeline-plot', traces, {
+        xaxis: { title: 'Date de publication' },
+        yaxis: { title: '% des commentaires', rangemode: 'tozero' },
+        hovermode: 'x unified',
+        margin: { t: 20, b: 60 },
+        legend: { orientation: 'h', y: -0.2 },
+    }, { responsive: true });
+}
+
+// --- tableau des topics ---
+
+async function loadTopicTable() {
+    const data = await fetchJSON('/api/topics');
+    const tbody = document.querySelector('#topic-table tbody');
+    tbody.innerHTML = '';
+
+    data.forEach((t, idx) => {
+        const words = t.words.map(w => w.word).join(', ');
+        const color = COLORS[t.id % COLORS.length];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><span class="badge" style="background-color: ${color}">${t.label}</span></td>
+            <td>${t.nb_docs}</td>
+            <td><small>${words}</small></td>
+        `;
+        // clic sur une ligne = sélectionner le topic
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => {
+            currentTopic = t.id;
+            document.getElementById('topic-select').value = t.id;
+            loadBarchart(t.id);
+            loadWordcloud(t.id);
+        });
+        tbody.appendChild(row);
+    });
+}
+
+// --- event listeners ---
+
+document.getElementById('topic-select').addEventListener('change', (e) => {
+    currentTopic = parseInt(e.target.value);
+    loadBarchart(currentTopic);
+    loadWordcloud(currentTopic);
+});
+
+document.getElementById('filter-channel').addEventListener('change', loadScatter);
+document.getElementById('filter-video').addEventListener('change', loadScatter);
+
+// --- init au chargement de la page ---
+
+loadScatter();
+loadBarchart(currentTopic);
+loadWordcloud(currentTopic);
+loadTimeline();
+loadTopicTable();
+</script>
+{% endblock %}
