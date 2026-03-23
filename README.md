@@ -2,8 +2,6 @@
 
 Pipeline d'analyse thématique de commentaires YouTube. Extrait les commentaires de chaînes/vidéos YouTube, applique un prétraitement NLP, puis compare trois approches de topic modeling : LDA, NMF et BERTopic. Les résultats sont présentés via une interface web interactive.
 
-Projet perso.
-
 
 ## Installation
 
